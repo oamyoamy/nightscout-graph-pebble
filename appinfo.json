@@ -1,7 +1,7 @@
 {
   "uuid": "ea361603-0373-4865-9824-8f52c65c6e07",
-  "shortName": "nightscout-graph-pebble",
-  "longName": "nightscout-graph-pebble",
+  "shortName": "Urchin CGM",
+  "longName": "Urchin CGM",
   "companyName": "Mark Wilson",
   "versionLabel": "0.1",
   "sdkVersion": "3",
@@ -14,11 +14,13 @@
     "msgType": 0,
 
     "recency": 1,
-    "sgvs": 2,
-    "lastSgv": 3,
-    "trend": 4,
-    "delta": 5,
-    "statusText": 6,
+    "sgvCount": 2,
+    "sgvs": 3,
+    "lastSgv": 4,
+    "trend": 5,
+    "delta": 6,
+    "statusText": 7,
+    "graphExtra": 8,
 
     "mmol": 1,
     "topOfGraph": 2,
@@ -26,8 +28,14 @@
     "bottomOfRange": 4,
     "bottomOfGraph": 5,
     "hGridlines": 6,
-    "timeAlign": 7,
-    "batteryLoc": 8
+    "batteryAsNumber": 7,
+    "basalGraph": 8,
+    "basalHeight": 9,
+    "updateEveryMinute": 10,
+    "timeAlign": 11,
+    "batteryLoc": 12,
+    "numElements": 13,
+    "elements": 14
   },
   "resources": {
     "media": [
@@ -80,6 +88,11 @@
         "type": "pbi",
         "name": "CONN_ISSUE_RIG",
         "file": "images/conn_issue_rig.png"
+      },
+      {
+        "type": "pbi",
+        "name": "BATTERY_10",
+        "file": "images/battery_10.png"
       },
       {
         "type": "pbi",

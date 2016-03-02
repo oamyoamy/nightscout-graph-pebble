@@ -1,5 +1,8 @@
-# Ignore build generated files
 build
-
-# Ignore waf lock file
+src/generated
+config/js/generated
+test/output
 .lock-waf*
+*.pyc
+__pycache__
+node_modules

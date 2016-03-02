@@ -1,6 +1,8 @@
+#include <pebble.h>
 #include "app_keys.h"
 #include "config.h"
 #include "comm.h"
+#include "preferences.h"
 #include "staleness.h"
 
 static bool phone_contact = false;
@@ -47,6 +49,7 @@ static void schedule_update(uint32_t delay) {
   clear_timer(&request_timer);
   clear_timer(&timeout_timer);
   request_timer = app_timer_register(delay, request_update, NULL);
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "Scheduling update for delay %d", (int) delay);
 }
 
 static void request_update() {
@@ -62,15 +65,30 @@ static void request_update() {
 static void in_received_handler(DictionaryIterator *received, void *context) {
   phone_contact = true;
   update_in_progress = false;
-  schedule_update(UPDATE_FREQUENCY);
-
   staleness_update(received);
-  if (dict_find(received, APP_KEY_MSG_TYPE)->value->uint8 != MSG_TYPE_ERROR) {
+  int msg_type = dict_find(received, APP_KEY_MSG_TYPE)->value->uint8;
+  if (msg_type == MSG_TYPE_DATA) {
+    int32_t delay;
+    if (get_prefs()->update_every_minute) {
+      delay = 60 * 1000;
+    } else {
+      uint32_t recency = dict_find(received, APP_KEY_RECENCY)->value->uint32;
+      int32_t next_update = SGV_UPDATE_FREQUENCY - recency * 1000;
+      delay = next_update < 0 ? LATE_DATA_UPDATE_FREQUENCY : next_update;
+    }
+    schedule_update((uint32_t) delay);
+  }
+  if (msg_type == MSG_TYPE_ERROR) {
+    schedule_update(ERROR_RETRY_DELAY);
+  } else {
     data_callback(received);
   }
 }
 
 static void in_dropped_handler(AppMessageResult reason, void *context) {
+  // https://developer.getpebble.com/docs/c/Foundation/AppMessage/#AppMessageResult
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "Incoming AppMessage dropped, %d", reason);
+
   update_in_progress = false;
   schedule_update(IN_RETRY_DELAY);
 }
